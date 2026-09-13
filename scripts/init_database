@@ -1,0 +1,9 @@
+ /* 
+ creating three databases each layer has its own database 
+ */
+ 
+ 
+ create database bronze ; 
+create database silver ;
+create database gold ; 
+use bronze; 
