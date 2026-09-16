@@ -1,0 +1,22 @@
+-- cleaning & loading erp_cust_az12 into silver layer
+insert into silver.erp_cust_az12 (cid,bdate , gen)
+select 
+case when cid like 'NAS%' then substring(cid , 4 , length(cid)) else cid end cid
+,
+case when bdate > now() then null else bdate end bdate 
+, case when upper(trim(gen)) in ('F' , 'FEMALE') then 'Female'
+  when upper(trim(gen)) in ('M' , 'MALE') then 'Male'
+else 'n/a' end as gen from bronze.erp_cust_az12; 
+
+
+-- cleaning & loading erp_loc_a101 into silver layer 
+insert into silver.erp_loc_a101 (cid , cntry)
+select replace(cid , '-' ,'') as cid ,
+case when  trim(cntry) = 'DE' then 'Germany' 
+when trim(cntry) in ('US' , 'USA') then 'United Staets' 
+when trim(cntry) = '' or trim(cntry) is null then 'n/a' else trim(cntry) end cntry  from bronze.erp_loc_a101;  
+
+--  loading erp_px_cat_g1v2 into silver layer
+-- no need to do tranformations to this tables it is ready to be inserted
+insert into silver.erp_px_cat_g1v2 (id , cat , subcat , maintenance)
+ select id , cat , subcat , maintenance from bronze.erp_px_cat_g1v2;
